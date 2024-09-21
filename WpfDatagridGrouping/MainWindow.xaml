@@ -1,0 +1,73 @@
+﻿<Window x:Class="WpfDatagridGrouping.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:WpfDatagridGrouping"
+        Title="Group, Sort, and Filter Example" Height="575" Width="525">
+    <Window.Resources>
+        <local:CompleteConverter x:Key="CompleteConverter" />
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+        <DataGrid
+            ItemsSource="{Binding TasksCollectionView}"
+            CanUserAddRows="False">
+            <DataGrid.GroupStyle>
+                <!-- Style for groups at top level. -->
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Margin" Value="0,0,0,5" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <Expander IsExpanded="True" Background="#FF112255" BorderBrush="#FF002255"
+                                                  Foreground="#FFEEEEEE" BorderThickness="1,1,1,5">
+                                            <Expander.Header>
+                                                <DockPanel>
+                                                    <TextBlock FontWeight="Bold" Text="{Binding Path=Name}"
+                                                               Margin="5,0,0,0" Width="100" />
+                                                    <TextBlock FontWeight="Bold" Text="{Binding Path=ItemCount}" />
+                                                </DockPanel>
+                                            </Expander.Header>
+                                            <Expander.Content>
+                                                <ItemsPresenter />
+                                            </Expander.Content>
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+                <!-- Style for groups under the top level. -->
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <DockPanel Background="LightBlue">
+                                <TextBlock Text="{Binding Path=Name, Converter={StaticResource CompleteConverter}}"
+                                           Foreground="Blue" Margin="30,0,0,0" Width="100" />
+                                <TextBlock Text="{Binding Path=ItemCount}" Foreground="Blue" />
+                            </DockPanel>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </DataGrid.GroupStyle>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Foreground" Value="Black" />
+                    <Setter Property="Background" Value="White" />
+                </Style>
+            </DataGrid.RowStyle>
+        </DataGrid>
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <TextBlock Text=" Filter completed items " VerticalAlignment="Center" />
+            <CheckBox VerticalAlignment="Center" Command="{Binding ToggleCheckBoxCommand}"
+                      IsChecked="{Binding IsChecked, Mode=TwoWay}" />
+            <Button Content="Remove Groups" Margin="10,2,2,2" Command="{Binding UngroupCommand}" />
+            <Button Content="Group by Project/Status" Margin="2" Command="{Binding GroupCommand}" />
+        </StackPanel>
+    </Grid>
+</Window>
